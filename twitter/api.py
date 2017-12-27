@@ -3002,7 +3002,8 @@ class Api(object):
                               max_id=None,
                               count=None,
                               page=None,
-                              include_entities=True):
+                              include_entities=True,
+                              full_text=False):
         """Returns a list of the direct messages sent by the authenticating user.
 
         Args:
@@ -3026,6 +3027,9 @@ class Api(object):
           include_entities:
             The entities node will be omitted when set to False.
             [Optional]
+          full_text:
+            When set to True full message will be included in the returned message
+            object if message length is bigger than 140 characters. [Optional]
 
         Returns:
           A sequence of twitter.DirectMessage instances
@@ -3045,6 +3049,8 @@ class Api(object):
                 raise TwitterError({'message': "count must be an integer"})
         if not include_entities:
             parameters['include_entities'] = 'false'
+        if full_text:
+            parameters['full_text'] = 'true'
 
         resp = self._RequestUrl(url, 'GET', data=parameters)
         data = self._ParseAndCheckTwitter(resp.content.decode('utf-8'))
